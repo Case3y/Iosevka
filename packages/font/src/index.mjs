@@ -3,6 +3,7 @@ import zlib from "node:zlib";
 
 import * as Caching from "@iosevka/geometry-cache";
 import { encode } from "@msgpack/msgpack";
+import { Ot } from "ot-builder";
 
 import { buildFont } from "./build-font/index.mjs";
 import { saveTTF } from "./font-io/index.mjs";
@@ -21,6 +22,11 @@ async function main(argv) {
 	// Build font
 	const { font, charMap, cacheUpdated, ttfaControls } = await buildFont(para, cache);
 
+	// Apply narrow-list post-processing: narrow only listed characters, keep others wide
+	if (argv.shape.spacing === "narrow-list" && argv.narrowChars?.length) {
+		await deriveNarrowList(font, argv.narrowChars);
+	}
+
 	// Save charmap
 	if (argv.oCharMap) await fs.promises.writeFile(argv.oCharMap, zlib.gzipSync(encode(charMap)));
 	// Save ttfaControls
@@ -33,4 +39,27 @@ async function main(argv) {
 	}
 
 	return { cacheUpdated };
+}
+
+async function deriveNarrowList(font, narrowChars) {
+	if (narrowChars.length === 0) return;
+	if (!font.gsub) return;
+	// Build NWID mapping from GSUB: wide glyph ID → narrow glyph ID
+	const nwidMap = new Map();
+	for (const feature of font.gsub.features) {
+		if (feature.tag !== "NWID") continue;
+		for (const lookup of feature.lookups) {
+			if (!(lookup instanceof Ot.Gsub.Single)) continue;
+			for (const [from, to] of lookup.mapping) {
+				nwidMap.set(from, to);
+			}
+		}
+	}
+	// Remap only the specified characters from wide (WWID) to narrow (NWID)
+	for (const ch of narrowChars) {
+		const wideGid = font.cmap.unicode.get(ch);
+		if (wideGid == null) continue;
+		const narrowGid = nwidMap.get(wideGid);
+		if (narrowGid != null) font.cmap.unicode.set(ch, narrowGid);
+	}
 }

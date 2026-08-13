@@ -1,0 +1,35 @@
+[buildPlans.IosevkaFlow]
+family = "Iosevka Flow"
+spacing = "narrow-list"
+serifs = "sans"
+noCvSs = true
+exportGlyphNames = false
+noLigation = true
+narrowChars = [0x2190, 0x2191, 0x2192, 0x2193]  # ← ↑ → ↓
+
+[buildPlans.IosevkaFlow.weights.Regular]
+shape = 500
+menu = 400
+css = 400
+
+[buildPlans.IosevkaFlow.weights.Bold]
+shape = 700
+menu = 700
+css = 700
+
+[buildPlans.IosevkaFlow.widths.Normal]
+shape = 500
+menu = 5
+css = "normal"
+
+[buildPlans.IosevkaFlow.slopes.Upright]
+angle = 0
+shape = "upright"
+menu = "upright"
+css = "normal"
+
+[buildPlans.IosevkaFlow.slopes.Italic]
+angle = 9.4
+shape = "italic"
+menu = "italic"
+css = "italic"

@@ -117,6 +117,10 @@ spacing = 4
 [spacing-term]
 spacing = 0
 
+# Custom: keep only listed characters narrow (1 cell), rest stay wide (2 cells)
+[spacing-narrow-list]
+spacing = 1
+
 # "FontFonfig Monospace"
 [spacing-fontconfig-mono]
 spacing = 0

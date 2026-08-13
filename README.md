@@ -6,6 +6,40 @@
 
 **Iosevka** \[ˌjɔˈseβ.kʰa\] is an *open-source*, *sans-serif* + *slab-serif*, *monospace* + *quasi‑proportional* typeface family, designed for *writing code*, using in *terminals*, and preparing *technical documents*.
 
+---
+
+## Fork Customization: `narrow-list` Spacing Mode
+
+This fork adds a **`narrow-list`** spacing mode that lets you pick exactly which characters should be single-width (1 cell) while keeping all other double-width characters at their original 2-cell width.
+
+### Usage
+
+In your `private-build-plans.toml`, set `spacing = "narrow-list"` and add a `narrowChars` array with the Unicode codepoints you want to narrow:
+
+```toml
+[buildPlans.IosevkaCustom]
+family = "Iosevka Custom"
+spacing = "narrow-list"
+serifs = "sans"
+# ...
+narrowChars = [
+    0x2190, 0x2191, 0x2192, 0x2193,   # ← ↑ → ↓
+    0x21D0, 0x21D2,                    # ⇐ ⇒
+]
+```
+
+Only the characters listed in `narrowChars` will be rendered at single width; all other symbols (e.g. `≥`, `≠`, `≈`, `⇄`, etc.) remain at double width.
+
+### Modified files
+
+| File | Change |
+|------|--------|
+| `params/parameters.toml` | Added `[spacing-narrow-list]` section with `spacing = 1` |
+| `verdafile.mjs` | Added `narrowChars` field to `FontInfoOf` so the list flows through to the build script |
+| `packages/font/src/index.mjs` | After font generation, remaps specified characters from their wide (WWID) variants to narrow (NWID) variants via the GSUB NWID feature table |
+
+---
+
 ## Installation
 
 ### Installing from GitHub Releases

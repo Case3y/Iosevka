@@ -387,6 +387,9 @@ const FontInfoOf = computed.group("metadata:font-info-of", async (target, fileNa
 		// Spacing derivation -- creating faster build for spacing variants
 		spacingDerive,
 
+		// Narrow-list: characters to keep at single width
+		narrowChars: bp.narrowChars || null,
+
 		// Composite variants from build plan -- used for variant resolution when building fonts
 		variantCompositesFromBuildPlan,
 		ligtionCompositesFromBuildPlan,
